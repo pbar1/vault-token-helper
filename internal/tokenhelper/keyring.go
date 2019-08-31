@@ -44,6 +44,9 @@ func NewKeyringHelper(vaultAddr string) (*KeyringHelper, error) {
 // Get gets a token from the keyring
 func (h KeyringHelper) Get() ([]byte, error) {
 	item, err := h.kr.Get(h.vaultAddr)
+	if err == keyring.ErrKeyNotFound {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}
