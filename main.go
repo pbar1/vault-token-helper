@@ -1,7 +1,15 @@
 package main
 
-import "github.com/pbar1/vault-token-helper/cmd"
+import (
+	"github.com/pbar1/vault-token-helper/internal/command"
+)
+
+var (
+	Version = ""
+	GitCommit = ""
+	BuildDate = ""
+)
 
 func main() {
-	cmd.Execute()
+	command.Execute(Version, GitCommit, BuildDate)
 }

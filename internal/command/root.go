@@ -1,4 +1,4 @@
-package cmd
+package command
 
 import (
 	"log"
@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "vault-token-helper",
 	Short: "Token helper for Hashicorp Vault",
@@ -16,9 +15,12 @@ var rootCmd = &cobra.Command{
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute(version, gitCommit, buildDate string) {
+	viper.Set("version", version)
+	viper.Set("git-commit", gitCommit)
+	viper.Set("build-date", buildDate)
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal(err)
+		log.Fatalf("unable to execute root command: %v\n", err)
 	}
 }
 
@@ -26,10 +28,13 @@ func init() {
 	cobra.OnInitialize(initConfig)
 }
 
-// initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	viper.BindEnv("vault-addr", "VAULT_ADDR")
+	err := viper.BindEnv("vault-addr", "VAULT_ADDR")
+	if err != nil {
+		log.Fatalf("unable to bind environment variable VAULT_ADDR: %v\n", err)
+	}
+
 	if viper.GetString("vault-addr") == "" {
-		log.Fatal("VAULT_ADDR environment variable must be set")
+		log.Fatalln("VAULT_ADDR environment variable must be set")
 	}
 }
